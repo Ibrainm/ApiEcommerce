@@ -2,10 +2,13 @@ using System.Text;
 using ApiEcommerce.Constans;
 using ApiEcommerce.Controllers;
 using ApiEcommerce.Data;
+using ApiEcommerce.Mapping;
 using ApiEcommerce.Models;
 using ApiEcommerce.Repository;
 using ApiEcommerce.Repository.IRepository;
 using Asp.Versioning;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +38,12 @@ builder.Services.AddResponseCaching(options =>
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Program).Assembly));
+
+// Mapster configuration
+var config = TypeAdapterConfig.GlobalSettings;
+config.Scan(typeof(CategoryProfile).Assembly);
+builder.Services.AddSingleton(config);
+
 //todo: cambio de inyección
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()

@@ -85,17 +85,6 @@ public class ProductRepository : IProductRepository
         return _db.Products.Include(c => c.Category).Where(p => p.CategoryId == categoryId).OrderBy(p => p.Name).ToList();
     }
 
-    public ICollection<Product> GetProductsInPages(int pageNumber, int pageSize)
-    {
-        return _db.Products.OrderBy( p => p.ProductId)
-        .Skip((pageNumber -1 ) * pageSize).Take(pageSize).ToList();
-    }
-
-    public int GetTotalProducts()
-    {
-        return _db.Products.Count();
-    }
-
     public bool ProductExists(int id)
     {
         if (id <= 0)
@@ -143,4 +132,20 @@ public class ProductRepository : IProductRepository
         _db.Products.Update(product);
         return Save();
     }
+
+    public int GetTotalProducts()
+    {
+        return _db.Products.Count();
+    }
+
+    public ICollection<Product> GetProductsInPages(int pageNumber, int pageSize)
+    {
+        return _db.Products
+            .Include(p => p.Category)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .OrderBy(p => p.Name)
+            .ToList();
+    }
 }
+
